@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+  <!ENTITY RFC2119 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml">
+  <!ENTITY RFC4492 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4492.xml">
+  <!ENTITY RFC5246 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml">
+  <!ENTITY RFC7301 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7301.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<rfc category="info" docName="draft-davidben-tls-grease-latest" ipr="trust200902">
+ <front>
+   <title>Applying GREASE to TLS Extensibility</title>
+
+   <author fullname="David Benjamin" initials="D." surname="Benjamin">
+     <organization>Google</organization>
+     <address>
+       <postal>
+         <street>355 Main St</street>
+         <city>Cambridge</city>
+         <region>MA</region>
+         <code>02142</code>
+         <country>USA</country>
+       </postal>
+       <email>davidben@google.com</email>
+     </address>
+   </author>
+
+   <date year="2016" />
+   <area>General</area>
+
+   <abstract>
+     <t>This document describes GREASE (Generate Random Extensions And Sustain
+     Extensibility), a mechanism to prevent extensibility failures in the TLS
+     ecosystem. It reserves a set of TLS protocol values that may be advertised
+     by clients to ensure servers correctly handle unknown values.</t>
+   </abstract>
+ </front>
+
+ <middle>
+   <section title="Introduction">
+<t>The TLS protocol <xref target="RFC5246" /> includes several points of
+extensibility, including the list of cipher suites and the list of extensions.
+The values in these lists identify implementation capabilities. TLS follows
+a model where clients advertise capabilities and servers select them. It is
+required that servers ignore unknown values so that new capabilities may be
+introduced to the ecosystem while maintaining interoperability.</t>
+
+<t>However, bugs may cause a server to reject unknown values. These broken
+servers will interoperate with existing clients, so the mistake may spread
+through the ecosystem unnoticed. Later, when new values are defined, updated
+clients will discover that the metaphorical joint in the protocol has rusted
+shut and that the new values cannot be deployed without interoperability
+failures.</t>
+
+<t>To avoid this problem, this document reserves some currently unused values for
+clients to advertise at random. Correct server implementations will ignore
+these values and interoperate. Servers that do not tolerate unknown values will
+fail to interoperate with existing clients, revealing the mistake before it is
+widespread. This document reserves such values in the TLS cipher suite,
+extension, named group <xref target="RFC4492" />, and ALPN <xref
+target="RFC7301" /> registries.</t>
+
+<t>In keeping with the rusted joint metaphor, this technique is named GREASE
+(Generate Random Extensions And Sustain Extensibility).</t>
+
+     <section title="Requirements Language">
+       <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+       "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+       document are to be interpreted as described in <xref
+       target="RFC2119">RFC 2119</xref>.</t>
+     </section>
+   </section>
+
+   <section title="GREASE Values">
+     <t>This document reserves a number of TLS protocol values, referred to as
+     GREASE values. These values were allocated sparsely to discourage server
+     implementations from conditioning on them. For convenience, they were also
+     chosen so all types share a number scheme with a consistent pattern while
+     avoiding collisions with any existing applicable registries in TLS.</t>
+
+     <t>The following values are reserved as GREASE cipher suite values:</t>
+
+     <?rfc subcompact="yes" ?>
+     <t><list>
+         <t>{Values TBD}</t>
+       </list></t>
+     <?rfc subcompact="no" ?>
+
+     <t>The following values are reserved as both GREASE extension values and
+     GREASE named group values:</t>
+
+     <?rfc subcompact="yes" ?>
+     <t><list>
+         <t>{Values TBD}</t>
+       </list></t>
+     <?rfc subcompact="no" ?>
+
+     <t>[[TODO: Depending on which of this or TLS 1.3 happens first, also reserve
+     SignatureScheme values. (The same number scheme will work fine there too.)]]</t>
+
+     <t>Note that these correspond to the reserved cipher suites when treated
+     as big-endian 16-bit integers.</t>
+
+     <t>Finally, this document reserves all ALPN identifiers beginning
+     with the prefix "ignore/". This corresponds to the seven-octet prefix: 0x69,
+     0x67, 0x6e, 0x6f, 0x72, 0x65, 0x2f.</t>
+   </section>
+
+   <section title="Client Behavior">
+
+     <t>When sending a ClientHello, a client which implements GREASE behaves as
+     follows:</t>
+
+     <t><list style="symbols">
+         <t>A client MAY select one or more random GREASE cipher suite values and advertise them in the ClientHello.cipher_suites field.</t>
+         <t>A client MAY select one or more random GREASE named group values and advertise them in the supported_groups extension, if sent.</t>
+         <t>A client MAY select one or more random GREASE extension values and advertise corresponding extensions with varying length and contents in the ClientHello.extensions field.</t>
+         <t>A client MAY select one or more random GREASE ALPN identifiers and advertise them in the application_layer_protocol_negotiation extension, if sent.</t>
+       </list></t>
+
+     <t>Clients SHOULD balance diversity in GREASE advertisements with determinism.
+     For example, a client which randomly varies GREASE value positions for each
+     connection may only fail against a broken server with some probability. This
+     risks the failure being masked by automatic retries. A client which positions
+     GREASE values deterministically over a period of time (such as a single
+     software release) stresses fewer cases but is more likely to detect bugs from
+     those cases.</t>
+
+     <t>Clients MUST reject GREASE values when negotiated by the server. When
+     processing a ServerHello containing a GREASE value in the
+     ServerHello.cipher_suite or ServerHello.extensions fields, the client MUST fail
+     the connection. When processing an ECParameters structure with a GREASE value
+     in the ECParameter.namedcurve field, the client MUST fail the connection.</t>
+
+     <t>Note that this requires no special processing on the client. Clients
+     are already required to reject unknown values selected by the server.</t>
+   </section>
+
+   <section title="Server Behavior">
+     <t>
+Servers MUST NOT treat GREASE values differently from any unknown value.
+Servers MUST NOT negotiate any GREASE value when offered in a ClientHello.
+Servers MUST correctly ignore unknown values in a ClientHello and attempt to negotiate with one of the remaining parameters.
+     </t>
+
+     <t>Note that these requirements are restatements or corollaries of
+     existing server requirements in TLS.</t>
+   </section>
+
+   <section anchor="IANA" title="IANA Considerations">
+     <t>This document updates the TLS Cipher Suite Registry, available from
+     <eref target="https://www.iana.org/assignments/tls-parameters"/>:</t>
+
+     <texttable title="Additions to the TLS Cipher Suite Registry">
+       <ttcol align='center'>Value</ttcol>
+       <ttcol align='center'>Description</ttcol>
+       <ttcol align='center'>DTLS-OK</ttcol>
+       <ttcol align='center'>Reference</ttcol>
+       <c>{TBD} {0x0A,0x0A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x1A,0x1A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x2A,0x2A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x3A,0x3A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x4A,0x4A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x5A,0x5A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x6A,0x6A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x7A,0x7A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x8A,0x8A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0x9A,0x9A}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xAA,0xAA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xBA,0xBA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xCA,0xCA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xDA,0xDA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xEA,0xEA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} {0xFA,0xFA}</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+     </texttable>
+
+     <t>The cipher suite numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
+
+     <t>This document updates the Supported Groups Registry, available from
+<eref target="https://www.iana.org/assignments/tls-parameters"/>:</t>
+
+     <texttable title="Additions to the Supported Groups Registry">
+       <ttcol align='center'>Value</ttcol>
+       <ttcol align='center'>Description</ttcol>
+       <ttcol align='center'>DTLS-OK</ttcol>
+       <ttcol align='center'>Reference</ttcol>
+       <c>{TBD} 2570</c>  <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 6682</c>  <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 10794</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 14906</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 19018</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 23130</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 27242</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 31354</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 35466</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 39578</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 43690</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 47802</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 51914</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 56026</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 60138</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+       <c>{TBD} 64250</c> <c>Reserved</c> <c>Y</c> <c>(this document)</c>
+     </texttable>
+
+     <t>The named group numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
+
+     <t>This document updates the ExtensionType Values registry, available from
+<eref target="https://www.iana.org/assignments/tls-extensiontype-values"/>:</t>
+
+     <texttable title="Additions to the ExtensionType Values registry">
+       <ttcol align='center'>Value</ttcol>
+       <ttcol align='center'>Extension name</ttcol>
+       <ttcol align='center'>Reference</ttcol>
+       <c>{TBD} 2570</c>  <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 6682</c>  <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 10794</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 14906</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 19018</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 23130</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 27242</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 31354</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 35466</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 39578</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 43690</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 47802</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 51914</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 56026</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 60138</c> <c>Reserved</c> <c>(this document)</c>
+       <c>{TBD} 64250</c> <c>Reserved</c> <c>(this document)</c>
+     </texttable>
+
+     <t>The extension numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
+
+     <t>[[TODO: How do I write IANA instructions to reserve all ALPN
+     identifiers that begin with "ignore/"? Perhaps it would be better to
+     reserve a concrete handful of identifiers instead.]]</t>
+   </section>
+
+   <section anchor="Security" title="Security Considerations">
+     <t>GREASE values may not be negotiated, so they do not directly impact the
+     security of TLS connections.</t>
+
+     <t>Historically, when interoperability problems arise in deploying new TLS
+     features, implementations have used a fallback retry on error with the
+     feature disabled. This allows an active attacker to silently disable the
+     new feature. By preventing a class of such interoperability problems,
+     GREASE reduces the need for this kind of fallback.</t>
+   </section>
+
+   <section anchor="Acknowledgements" title="Acknowledgements">
+<t>
+The author would like to thank Adam Langley, Nick Harper, and Steven Valdez for
+their feedback and suggestions. In addition, the rusted joint metaphor is
+originally due to Adam Langley.
+</t>
+   </section>
+ </middle>
+
+ <back>
+   <references title="Normative References">
+     &RFC2119;
+     &RFC4492;
+     &RFC5246;
+     &RFC7301;
+   </references>
+ </back>
+</rfc>
