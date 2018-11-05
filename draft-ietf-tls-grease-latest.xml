@@ -13,7 +13,7 @@
 <?rfc sortrefs="yes" ?>
 <?rfc compact="yes" ?>
 <?rfc subcompact="no" ?>
-<rfc category="info" docName="draft-ietf-tls-grease-latest" ipr="trust00902">
+<rfc category="info" docName="draft-ietf-tls-grease-latest" ipr="trust200902">
  <front>
    <title>Applying GREASE to TLS Extensibility</title>
 
