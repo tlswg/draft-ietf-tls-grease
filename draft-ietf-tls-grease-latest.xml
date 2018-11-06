@@ -355,6 +355,10 @@ value twice.</t>
      <t>[[TODO: How do I write IANA instructions to reserve all ALPN
      identifiers that begin with "ignore/"? Perhaps it would be better to
      reserve a concrete handful of identifiers instead.]]</t>
+
+     <t>IANA is also requested to add the following note to the TLS Aplication-Layer
+     Protocol Negotiation (ALPN) Protocol IDs Resitry: The RESERVED numbers from (this
+     document) are temporary and may change in the future.</t>
    </section>
 
    <section anchor="Security" title="Security Considerations">
