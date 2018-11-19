@@ -291,7 +291,7 @@ value twice.</t>
 
      <t>The cipher suite numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
 
-     <t>IANA is also requested to add the following note to the TLS Chiper Suite Resitry: The RESERVED numbers from (this document) are temporary and may change in the future.</t>
+     <t>IANA is also requested to add the following note to the TLS Cipher Suite Resitry: The RESERVED numbers from (this document) are temporary and may change in the future.</t>
 
      <t>This document updates the TLS Supported Groups Registry, available from
 <eref target="https://www.iana.org/assignments/tls-parameters"/>:</t>
