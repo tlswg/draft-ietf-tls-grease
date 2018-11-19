@@ -350,7 +350,7 @@ value twice.</t>
 
      <t>The extension numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
 
-     <t>IANA is also requested to add the following note to the TLS ExtensionType Values Resitry: The RESERVED numbers from (this document) are temporary and may change in the future.</t>
+     <t>IANA is also requested to add the following note to the TLS ExtensionType Values Registry: The RESERVED numbers from (this document) are temporary and may change in the future.</t>
 
      <t>[[TODO: How do I write IANA instructions to reserve all ALPN
      identifiers that begin with "ignore/"? Perhaps it would be better to
