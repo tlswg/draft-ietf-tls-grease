@@ -4,7 +4,7 @@
   <!ENTITY RFC6347 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6347.xml">
   <!ENTITY RFC7301 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7301.xml">
   <!ENTITY RFC8174 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8174.xml">
-  <!ENTITY RFC8466 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8466.xml">
+  <!ENTITY RFC8446 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.8446.xml">
 ]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <?rfc strict="yes" ?>
@@ -45,7 +45,7 @@
 
  <middle>
    <section title="Introduction">
-<t>The TLS protocol <xref target="RFC8466" /> includes several points of
+<t>The TLS protocol <xref target="RFC8446" /> includes several points of
 extensibility, including the list of cipher suites and the list of extensions.
 The values in these lists identify implementation capabilities. TLS follows
 a model where one side, usually the client, advertises capabilities and the
@@ -85,7 +85,8 @@ widespread.</t>
      chosen so all types share a number scheme with a consistent pattern while
      avoiding collisions with any existing applicable registries in TLS.</t>
 
-     <t>The following values are reserved as GREASE values for cipher suites:</t>
+     <t>The following values are reserved as GREASE values for cipher suites
+     and ALPN identifiers:</t>
 
      <?rfc subcompact="yes" ?>
      <t><list>
@@ -149,10 +150,6 @@ widespread.</t>
          <t>{TBD} 0xE4</t>
        </list></t>
      <?rfc subcompact="no" ?>
-
-     <t>Finally, this document reserves all ALPN identifiers <xref target="RFC7301" /> beginning
-     with the prefix "ignore/". This corresponds to the seven-octet prefix: 0x69,
-     0x67, 0x6e, 0x6f, 0x72, 0x65, 0x2f.</t>
    </section>
 
 <section title="Client-Initiated Extension Points">
@@ -349,9 +346,31 @@ value twice.</t>
 
      <t>The extension numbers listed in the first column are numbers used for cipher suite interoperability testing and it's suggested that IANA use these values for assignment.</t>
 
-     <t>[[TODO: How do I write IANA instructions to reserve all ALPN
-     identifiers that begin with "ignore/"? Perhaps it would be better to
-     reserve a concrete handful of identifiers instead.]]</t>
+     <t>This document updates the TLS Application-Layer Protocol Negotiation
+       (ALPN) Protocol IDs registry, available from
+       <eref target="https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values"/>:</t>
+
+     <texttable title="Additions to the ALPN Protocol IDs registry">
+       <ttcol align='center'>Protocol</ttcol>
+       <ttcol align='center'>Identification Sequence</ttcol>
+       <ttcol align='center'>Reference</ttcol>
+       <c>Reserved</c> <c>{TBD} 0x0A 0x0A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x1A 0x1A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x2A 0x2A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x3A 0x3A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x4A 0x4A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x5A 0x5A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x6A 0x6A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x7A 0x7A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x8A 0x8A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0x9A 0x9A</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xAA 0xAA</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xBA 0xBA</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xCA 0xCA</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xDA 0xDA</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xEA 0xEA</c> <c>(this document)</c>
+       <c>Reserved</c> <c>{TBD} 0xFA 0xFA</c> <c>(this document)</c>
+     </texttable>
    </section>
 
    <section anchor="Security" title="Security Considerations">
@@ -379,7 +398,8 @@ originally due to Adam Langley.
      &RFC2119;
      &RFC6347;
      &RFC7301;
-     &TLS13;
+     &RFC8174;
+     &RFC8446;
    </references>
  </back>
 </rfc>
