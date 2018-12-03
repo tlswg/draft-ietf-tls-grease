@@ -382,6 +382,11 @@ value twice.</t>
      feature disabled. This allows an active attacker to silently disable the
      new feature. By preventing a class of such interoperability problems,
      GREASE reduces the need for this kind of fallback.</t>
+     
+     <t>If an implementation does not select grease values at random it is 
+     possible it will allow for fingerprinting of the implementation or 
+     perhaps even of individual users. This can result in a negative impact to
+     a user's privacy.</t>
    </section>
 
    <section anchor="Acknowledgements" title="Acknowledgements">
