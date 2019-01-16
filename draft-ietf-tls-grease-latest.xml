@@ -32,7 +32,7 @@
      </address>
    </author>
 
-   <date year="2018" />
+   <date year="2019" />
    <area>General</area>
 
    <abstract>
@@ -86,7 +86,7 @@ widespread.</t>
      avoiding collisions with any existing applicable registries in TLS.</t>
 
      <t>The following values are reserved as GREASE values for cipher suites
-     and ALPN identifiers:</t>
+     and ALPN <xref target="RFC7301" /> identifiers:</t>
 
      <?rfc subcompact="yes" ?>
      <t><list>
