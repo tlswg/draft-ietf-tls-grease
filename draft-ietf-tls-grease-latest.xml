@@ -19,15 +19,8 @@
    <title>Applying GREASE to TLS Extensibility</title>
 
    <author fullname="David Benjamin" initials="D." surname="Benjamin">
-     <organization>Google</organization>
+     <organization>Google LLC</organization>
      <address>
-       <postal>
-         <street>320 N Morgan St, Suite 600</street>
-         <city>Chicago</city>
-         <region>IL</region>
-         <code>60607</code>
-         <country>USA</country>
-       </postal>
        <email>davidben@google.com</email>
      </address>
    </author>
