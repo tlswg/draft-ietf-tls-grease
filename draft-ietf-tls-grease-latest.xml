@@ -39,7 +39,7 @@
  <middle>
    <section title="Introduction">
 <t>The TLS protocol <xref target="RFC8446" /> includes several points of
-extensibility, including the list of cipher suites and serveral lists of extensions.
+extensibility, including the list of cipher suites and several lists of extensions.
 The values transmitted in these lists identify implementation capabilities. TLS follows
 a model where one side, usually the client, advertises capabilities and the
 peer, usually the server, selects them. The responding side must ignore unknown
